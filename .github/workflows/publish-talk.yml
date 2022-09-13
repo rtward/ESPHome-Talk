@@ -17,9 +17,8 @@ jobs:
         with:
           args: --slide-level 2 -t revealjs -s README.md -o dist/index.html
 
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-pages-artifact@v1
         with:
-          name: dist
           path: dist
 
   deploy:
