@@ -50,11 +50,16 @@ There are a few options for installing ESPHome on your main system, in order to 
 
 ## Native
 
-`apt install esphome`
+```
+# Ubuntu
+apt install esphome
 
-`pacman -S esphome`
+# Arch
+pacman -S esphome
 
-`brew install esphome`
+# OSX
+brew install esphome
+```
 
 ::: notes
 
@@ -66,7 +71,9 @@ You'll install the esphome command line client from your operating system's repo
 
 ## Docker
 
-`docker pull esphome/esphome`
+```
+docker pull esphome/esphome
+```
 
 ::: notes
 
@@ -89,9 +96,11 @@ We won't be covering this today, it's not as useful for initial programming, but
 
 # Running
 
-`esphome ...`
+```
+esphome ...
 
-`docker run --rm -v "${PWD}":/config -it esphome/esphome ...`
+docker run --rm -v "${PWD}":/config -it esphome/esphome ...
+```
 
 ::: notes
 
@@ -105,7 +114,9 @@ If you installed it using docker, you'll need a little bit extra, but otherwise 
 
 ## Wizard
 
-`esphome wizard my-project.yaml`
+```
+esphome wizard my-project.yaml
+```
 
 ::: notes
 
@@ -365,18 +376,144 @@ binary_sensor:
 ::: notes
 
 Lambdas are the most complicated action, but also the most powerful.
-
+Not going to get too into the syntax, as in my experience it's not needed most of the time.
 You can write C code which will be executed as your action, while having full access to the state and info about the trigger event.
-
 I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're inherently much harder to maintain and work on than a normal YAML action.
 
 :::
 
 ## Conditions
 
+::: notes
+
+Conditions are where you can really take your actions to the next level.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+sensor:
+  - platform: dht
+    humidity:
+    name: "Temperature"
+    id: temperature_sensor
+    on_value_range:
+      - below: 70
+        then:
+          - if:
+            condition:
+              binary_sensor.is_on: motion_sensor
+            then:
+              - logger.log: "Turning on heater"
+              - switch.turn_on: heater
+```
+
+::: notes
+
+The If action allows you to use a condition to optionally execute one action or another depending on the condition.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+sensor:
+  - platform: dht
+    humidity:
+    name: "Temperature"
+    id: temperature_sensor
+    on_value_range:
+      - below: 70
+        then:
+          - switch.turn_on: heater
+          - wait_until:
+            condition:
+              sensor.in_range:
+                id: temperature_sensor
+                above: 73
+            then:
+              - switch.turn_off: heater
+```
+
+::: notes
+
+The wait_until action allows you to wait for a condition before continuing your action
+
+You can see the sensor.in_range condition which allows you to execute an action only if another sensor is within some given values.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - if:
+          condition:
+            switch.is_on: light
+          then:
+            - logger.log: "Button Pressed"
+            - switch.turn_off: light
+```
+
+::: notes
+
+The switch condition alows you to check the state of a switch before continuing with your actions
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - if:
+          condition:
+            lambda: |-
+              return id(some_sensor).state < 30;
+          then:
+            - logger.log: "Button Pressed"
+```
+
+::: notes
+
+Like the lambda action, the lambda condition is a do-anything option when the other conditions won't work.
+
+:::
+
 ## Scripts
 
-## Globals
+```
+script:
+  - id: blink_light
+    then:
+      - repeat:
+        times: 5
+        then: 
+        - switch.turn_on: my_switch
+        - delay: 1s
+        - switch.turn_off: my_switch
+        - delay: 1s
+
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        script.execute: blink_light
+```
+
+::: notes
+
+Scripts are reusable actions which you can apply in multiple places.
+
+Think of them like functions if you've used other programming languages.
+
+:::
 
 # Adding Functionality
 
@@ -395,8 +532,6 @@ I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're i
 ## LED Lights
 
 ## Display
-
-## HTTP Requests
 
 # Integrating
 
