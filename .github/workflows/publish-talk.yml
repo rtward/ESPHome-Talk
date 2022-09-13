@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - run: mkdir -p dist
+
       - uses: docker://pandoc/core:2.9
         with:
           args: --slide-level 2 -t revealjs -s README.md -o dist/index.html
