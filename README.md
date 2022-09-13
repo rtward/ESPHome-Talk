@@ -6,15 +6,11 @@
 
 ::: notes
 
-ESPHome is a configurable operating system for programming ESP based microcontrollers.
-
-ESPHome allows for easy configuration of microcontrollers to perform many different automation tasks.
-
-You can configure the controller to respond to inputs in many different ways.
-
-Can work local only
-
-My goal here is to convince you to use ESPHome for your next project instead of doing custom coding if you can avoid it.
+ - ESPHome is a configurable operating system for programming ESP based microcontrollers.
+ - ESPHome allows for easy configuration of microcontrollers to perform many different automation tasks.
+ - You can configure the controller to respond to inputs in many different ways.
+ - Can work local only
+ - My goal here is to convince you to use ESPHome for your next project instead of doing custom coding if you can avoid it.
 
 :::
 
@@ -22,11 +18,9 @@ My goal here is to convince you to use ESPHome for your next project instead of 
 
 ::: notes
 
-All sorts of things!
-
-Switches, light/motion sensors, bluetooth inputs, air quality, temperature, motion...
-
-If you can connect it with a wire, there's probably a way to attach it to an ESPHome controller
+ - All sorts of things!
+ - Switches, light/motion sensors, bluetooth inputs, air quality, temperature, motion...
+ - If you can connect it with a wire, there's probably a way to attach it to an ESPHome controller
 
 :::
 
@@ -34,11 +28,9 @@ If you can connect it with a wire, there's probably a way to attach it to an ESP
 
 ::: notes
 
-Watch for bluetooth devices to come into range
-
-Watch the current on a device
-
-Read prox cards and unlock doors
+ - Watch for bluetooth devices to come into range
+ - Watch the current on a device
+ - Read prox cards and unlock doors
 
 :::
 
@@ -46,7 +38,7 @@ Read prox cards and unlock doors
 
 ::: notes
 
-There are a few options for installing ESPHome on your main system, in order to program microcontrollers
+ - There are a few options for installing ESPHome on your main system, in order to program microcontrollers
 
 :::
 
@@ -65,9 +57,8 @@ brew install esphome
 
 ::: notes
 
-The native option is probably the least used, but it is available and some people prefer it.
-
-You'll install the esphome command line client from your operating system's repos
+ - The native option is probably the least used, but it is available and some people prefer it.
+ - You'll install the esphome command line client from your operating system's repos
 
 :::
 
@@ -79,9 +70,9 @@ docker pull esphome/esphome
 
 ::: notes
 
-This is the most common option. 
-It has the advantage of not having to worry about dependencies.
-You will need to explicity pass through devices for local programming however.
+ - This is the most common option. 
+ - It has the advantage of not having to worry about dependencies.
+ - You will need to explicity pass through devices for local programming however.
 
 :::
 
@@ -91,8 +82,8 @@ Install the ESPHome Addon
 
 ::: notes
 
-If you're going to be integrating ESPHome into a HomeAssistant setup, this can be an easy option.
-We won't be covering this today, it's not as useful for initial programming, but can be an easy way to keep devices up to date.
+ - If you're going to be integrating ESPHome into a HomeAssistant setup, this can be an easy option.
+ - We won't be covering this today, it's not as useful for initial programming, but can be an easy way to keep devices up to date.
 
 :::
 
@@ -106,9 +97,9 @@ docker run --rm -v "${PWD}":/config -it esphome/esphome ...
 
 ::: notes
 
-Once you've installed esphome, you can run it on the command line.
-If you installed it natively, just run the command esphome.
-If you installed it using docker, you'll need a little bit extra, but otherwise the commands will be the same
+ - Once you've installed esphome, you can run it on the command line.
+ - If you installed it natively, just run the command esphome.
+ - If you installed it using docker, you'll need a little bit extra, but otherwise the commands will be the same
 
 :::
 
@@ -122,9 +113,9 @@ esphome wizard my-project.yaml
 
 ::: notes
 
-The wizard is an easy way to interactively create a base config file.
-It'll ask you questions on the command line and you'll type the answers.
-It'll then write out a base config file you can use for further editing.
+ - The wizard is an easy way to interactively create a base config file.
+ - It'll ask you questions on the command line and you'll type the answers.
+ - It'll then write out a base config file you can use for further editing.
 
 :::
 
@@ -148,45 +139,54 @@ wifi:
 
 ::: notes
 
-Once you have your base config file, it'll look something like this.
-The ESPHome section is the basic configuration of the controller, it's name, and the type of hardware
-The WiFi section sets up both the wifi the controller will try to connectt to, as well as the fallback network it will create when it can't find the primary network.
+ - Once you have your base config file, it'll look something like this.
+ - The ESPHome section is the basic configuration of the controller, it's name, and the type of hardware
+ - The WiFi section sets up both the wifi the controller will try to connectt to, as well as the fallback network it will create when it can't find the primary network.
 
 :::
 
 ## Via Cable
 
-`esphome run my-project.yaml`
+```
+esphome run my-project.yaml
 
-`docker run --rm -v "${PWD}":/config --device=/dev/ttyUSB0 -it esphome/esphome run my-project.yaml`
+docker run --rm -it \
+  -v "${PWD}":/config \
+  --device=/dev/ttyUSB0 \
+  esphome/esphome run my-project.yaml
+```
 
 ::: notes
 
-For your initial programming, you'll probably connect the ESP directly with a USB cable.
-Once you run the above commands, it'll notice the ESP connected via USB and give you the option to program it.
+ - For your initial programming, you'll probably connect the ESP directly with a USB cable.
+ - Once you run the above commands, it'll notice the ESP connected via USB and give you the option to program it.
 
 :::
 
 ## OTA
 
-`esphome run my-project.yaml`
+```
+esphome run my-project.yaml
+```
 
 ::: notes
 
-After the initial programming, the easiest way to update your controllers is OTA (over the air)
-When you run this command without an ESP connected, it'll ask you if you want to update over the air.
-As long as the device you're working from and the controller are connected to the same network, it should find it and update it seamlessly.
+ - After the initial programming, the easiest way to update your controllers is OTA (over the air)
+ - When you run this command without an ESP connected, it'll ask you if you want to update over the air.
+ - As long as the device you're working from and the controller are connected to the same network, it should find it and update it seamlessly.
 
 :::
 
 ## Logs 
 
-`esphome logs my-project.yaml`
+```
+esphome logs my-project.yaml
+```
 
 ::: notes
 
-If you're trying to debug one of your controllers, youc an run the logs command.
-This will print out the logs from the device on your computer and allow you to see what's going on with the controller in real time.
+ - If you're trying to debug one of your controllers, youc an run the logs command.
+ - This will print out the logs from the device on your computer and allow you to see what's going on with the controller in real time.
 
 :::
 
@@ -194,8 +194,8 @@ This will print out the logs from the device on your computer and allow you to s
 
 ::: notes
 
-So now you've got your controller where you can program it, and start working on adding functionality
-I'm going to talk about some of the syntax next
+ - So now you've got your controller where you can program it, and start working on adding functionality
+ - I'm going to talk about some of the syntax next
 
 :::
 
@@ -203,9 +203,8 @@ I'm going to talk about some of the syntax next
 
 ::: notes
 
-Triggers are anything that causes an action to happen on the controller, whether it's a switch closing, a bluetooth device coming in range, a timer, boot up, whatever.
-
-I'm only going to talk about a few of them, just to give you an idea.  There are many more available in the ESPHome docs
+ - Triggers are anything that causes an action to happen on the controller, whether it's a switch closing, a bluetooth device coming in range, a timer, boot up, whatever.
+ - I'm only going to talk about a few of them, just to give you an idea.  There are many more available in the ESPHome docs
 
 :::
 
@@ -220,11 +219,9 @@ esphome:
 
 ::: notes
 
-On boot is just like it says, the automation runs once when the controller starts up.
-
-This can be very useful for setting default and resetting the system to some known good state.
-
-There are also on_shutdown and other lifecycle events available.
+ - On boot is just like it says, the automation runs once when the controller starts up.
+ - This can be very useful for setting default and resetting the system to some known good state.
+ - There are also on_shutdown and other lifecycle events available.
 
 :::
 
@@ -245,9 +242,8 @@ sensor:
 
 ::: notes
 
-The on_value trigger will execute whenever a sensor has a new value.
-
-See also the on_value_range trigger to execute an automation when a sensor gets within a certain range of values.
+- The on_value trigger will execute whenever a sensor has a new value.
+- See also the on_value_range trigger to execute an automation when a sensor gets within a certain range of values.
 
 :::
 
@@ -263,9 +259,8 @@ binary_sensor:
 
 ::: notes
 
-The on_press trigger is very useful for buttons attached to the GPIO pins of the controller.  Can also be used for any type of mechanical switch that is on or off.
-
-See also on_release, on_click, on_multiclick
+ - The on_press trigger is very useful for buttons attached to the GPIO pins of the controller.  Can also be used for any type of mechanical switch that is on or off.
+ - See also on_release, on_click, on_multiclick
 
 :::
 
@@ -289,7 +284,7 @@ time:
 
 ::: notes
 
-Timer triggers are useful for causing automations to happen at certain times.
+ - Timer triggers are useful for causing automations to happen at certain times.
 
 :::
 
@@ -297,9 +292,8 @@ Timer triggers are useful for causing automations to happen at certain times.
 
 ::: notes
 
-Actions are the thing you do in response to a trigger.
-
-Sometimes they can be simple, and as we'll see later, sometime they can get very complicated.
+ - Actions are the thing you do in response to a trigger.
+ - Sometimes they can be simple, and as we'll see later, sometime they can get very complicated.
 
 :::
 
@@ -315,9 +309,8 @@ binary_sensor:
 
 ::: notes
 
-You've already seen the logger, this just writes out notes into the system log which can be viewed with the command we talked about earlier.
-
-You'll mostly want to use this in combination with other actions
+ - You've already seen the logger, this just writes out notes into the system log which can be viewed with the command we talked about earlier.
+ - You'll mostly want to use this in combination with other actions
 
 :::
 
@@ -339,7 +332,7 @@ binary_sensor:
 
 ::: notes
 
-You can use the turn on / off actions to switch external devices on and off.
+ - You can use the turn on / off actions to switch external devices on and off.
 
 :::
 
@@ -358,7 +351,7 @@ binary_sensor:
 
 ::: notes
 
-You can use the HTTP request module to interact with external servers during actions
+ - You can use the HTTP request module to interact with external servers during actions
 
 :::
 
@@ -377,10 +370,10 @@ binary_sensor:
 
 ::: notes
 
-Lambdas are the most complicated action, but also the most powerful.
-Not going to get too into the syntax, as in my experience it's not needed most of the time.
-You can write C code which will be executed as your action, while having full access to the state and info about the trigger event.
-I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're inherently much harder to maintain and work on than a normal YAML action.
+ - Lambdas are the most complicated action, but also the most powerful.
+ - Not going to get too into the syntax, as in my experience it's not needed most of the time.
+ - You can write C code which will be executed as your action, while having full access to the state and info about the trigger event.
+ - I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're inherently much harder to maintain and work on than a normal YAML action.
 
 :::
 
@@ -388,7 +381,7 @@ I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're i
 
 ::: notes
 
-Conditions are where you can really take your actions to the next level.
+ - Conditions are where you can really take your actions to the next level.
 
 :::
 
@@ -413,7 +406,7 @@ sensor:
 
 ::: notes
 
-The If action allows you to use a condition to optionally execute one action or another depending on the condition.
+ - The If action allows you to use a condition to optionally execute one action or another depending on the condition.
 
 :::
 
@@ -440,9 +433,8 @@ sensor:
 
 ::: notes
 
-The wait_until action allows you to wait for a condition before continuing your action
-
-You can see the sensor.in_range condition which allows you to execute an action only if another sensor is within some given values.
+ - The wait_until action allows you to wait for a condition before continuing your action
+ - You can see the sensor.in_range condition which allows you to execute an action only if another sensor is within some given values.
 
 :::
 
@@ -463,7 +455,7 @@ binary_sensor:
 
 ::: notes
 
-The switch condition alows you to check the state of a switch before continuing with your actions
+ - The switch condition alows you to check the state of a switch before continuing with your actions
 
 :::
 
@@ -484,7 +476,7 @@ binary_sensor:
 
 ::: notes
 
-Like the lambda action, the lambda condition is a do-anything option when the other conditions won't work.
+ - Like the lambda action, the lambda condition is a do-anything option when the other conditions won't work.
 
 :::
 
@@ -511,9 +503,8 @@ binary_sensor:
 
 ::: notes
 
-Scripts are reusable actions which you can apply in multiple places.
-
-Think of them like functions if you've used other programming languages.
+ - Scripts are reusable actions which you can apply in multiple places.
+ - Think of them like functions if you've used other programming languages.
 
 :::
 
@@ -521,7 +512,7 @@ Think of them like functions if you've used other programming languages.
 
 ::: notes
 
-We've talked about how to program ESP controllers, but what can we actually connect to them?
+ - We've talked about how to program ESP controllers, but what can we actually connect to them?
 
 :::
 
@@ -548,7 +539,7 @@ sensor:
 
 ::: notes
 
-This is a project I've been working on lately.  Using BT trackers to know if my garbage cans are in the garage.
+ - This is a project I've been working on lately.  Using BT trackers to know if my garbage cans are in the garage.
 
 :::
 
@@ -567,7 +558,7 @@ sensor:
 
 ::: notes
 
-This is an air quality sensor based on the IKEA VINDRIKTNING
+ - This is an air quality sensor based on the IKEA VINDRIKTNING
 
 :::
 
@@ -591,7 +582,7 @@ sensor:
 
 ::: notes
 
-This is an integration with a common bluetooth plant sensor available on Amazon and AliExpress called MiFlora
+ - This is an integration with a common bluetooth plant sensor available on Amazon and AliExpress called MiFlora
 
 :::
 
@@ -611,11 +602,9 @@ sensor:
 
 ::: notes
 
-This is an integration with a current clamp that can be used to tell how much power a device is drawing. 
-
-The top sensor is the analog to digital current input.
-
-That input is converted into current by the bottom sensor
+ - This is an integration with a current clamp that can be used to tell how much power a device is drawing. 
+ - The top sensor is the analog to digital current input.
+ - That input is converted into current by the bottom sensor
 
 :::
 
@@ -633,7 +622,7 @@ sensor:
 
 ::: notes
 
-There are several off the shelf temperature sensors you can use for measuring temperature and humidity.
+ - There are several off the shelf temperature sensors you can use for measuring temperature and humidity.
 
 :::
 
@@ -657,8 +646,8 @@ switch:
 
 ::: notes
 
-The GPIO ports are the swiss army knife of the ESP device.
-Any sort of swtich can be used.
+ - The GPIO ports are the swiss army knife of the ESP device.
+ - Any sort of swtich can be used.
 
 :::
 
@@ -681,8 +670,8 @@ display:
 
 ::: notes
 
-ESPHome supports a number of different LED and LCD displays.
-It has a basic graphics toolkit for writing text to the screen.
+ - ESPHome supports a number of different LED and LCD displays.
+ - It has a basic graphics toolkit for writing text to the screen.
 
 :::
 
@@ -690,8 +679,8 @@ It has a basic graphics toolkit for writing text to the screen.
 
 ::: notes
 
-While ESPHome is very powerful on its own, it's mostly used as part of larger systems.
-Home Assistant is the most common one, although anything that speaks MQTT can be made to integrate.
+ - While ESPHome is very powerful on its own, it's mostly used as part of larger systems.
+ - Home Assistant is the most common one, although anything that speaks MQTT can be made to integrate.
 
 :::
 
@@ -721,7 +710,7 @@ binary_sensor:
 
 ::: notes
 
-MQTT is a message passing protocol that's a lightway way for many different systems to communicate with each other.
+ - MQTT is a message passing protocol that's a lightway way for many different systems to communicate with each other.
 
 :::
 
@@ -733,9 +722,9 @@ api:
 
 ::: notes
 
-Home Assistant is the most common integration for ESPHome.
-All you need to do is add this line to your config and it'll automatically get picked up in HA.
-Sensors will be published to HA, and any switches or other outputs will be accessible as well.
+ - Home Assistant is the most common integration for ESPHome.
+ - All you need to do is add this line to your config and it'll automatically get picked up in HA.
+ - Sensors will be published to HA, and any switches or other outputs will be accessible as well.
 
 :::
 
