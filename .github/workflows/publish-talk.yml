@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: mkdir -p dist
+      - name: Create Dist Directory
+        run: mkdir -p dist
+      - name: Clone Reveal
+        run: git clone https://github.com/hakimel/reveal.js.git 'reveal.js'
       - uses: docker://pandoc/core:2.9
         with:
           args: --slide-level 2 -t revealjs -s README.md -o dist/index.html
