@@ -44,7 +44,7 @@
 
 ## Native
 
-```
+``` { .bash .numberLines }
 # Ubuntu
 apt install esphome
 
@@ -64,7 +64,7 @@ brew install esphome
 
 ## Docker
 
-```
+``` { .bash .numberLines }
 docker pull esphome/esphome
 ```
 
@@ -89,7 +89,7 @@ Install the ESPHome Addon
 
 # Running
 
-```
+``` { .bash .numberLines }
 esphome ...
 
 docker run --rm -v "${PWD}":/config -it esphome/esphome ...
@@ -107,7 +107,7 @@ docker run --rm -v "${PWD}":/config -it esphome/esphome ...
 
 ## Wizard
 
-```
+``` { .bash .numberLines }
 esphome wizard my-project.yaml
 ```
 
@@ -147,7 +147,7 @@ wifi:
 
 ## Via Cable
 
-```
+``` { .bash .numberLines }
 esphome run my-project.yaml
 
 docker run --rm -it \
@@ -165,7 +165,7 @@ docker run --rm -it \
 
 ## OTA
 
-```
+``` { .bash .numberLines }
 esphome run my-project.yaml
 ```
 
@@ -179,7 +179,7 @@ esphome run my-project.yaml
 
 ## Logs 
 
-```
+``` { .bash .numberLines }
 esphome logs my-project.yaml
 ```
 
@@ -732,7 +732,7 @@ api:
 
 ## Trash Bin Sensor
 
-```
+``` { .yaml .numberLines }
 esphome:
   name: kitchen-air-quality
   platform: ESP8266
@@ -770,7 +770,7 @@ sensor:
 
 ## Air Quality Meter
 
-```
+``` { .yaml .numberLines }
 esphome:
   name: kitchen-air-quality
   platform: ESP8266
@@ -806,7 +806,7 @@ sensor:
 
 ## Arch Reactor Lockouts
 
-```
+``` { .yaml .numberLines }
 esphome:
   name: lockout-backdoor
   platform: ESP8266
