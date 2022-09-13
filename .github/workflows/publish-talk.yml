@@ -16,7 +16,7 @@ jobs:
         run: git clone https://github.com/hakimel/reveal.js.git 'reveal.js'
       - name: Copy Reveal To Dist
         run: cp -r reveal.js/dist dist/reveal.js
-      - uses: docker://pandoc/core:2.9
+      - uses: docker://pandoc/core:2.19.2
         with:
           args: --slide-level 2 -t revealjs -s README.md -o dist/index.html
       - uses: actions/upload-pages-artifact@v1

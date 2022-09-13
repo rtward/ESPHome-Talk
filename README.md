@@ -179,19 +179,204 @@ This will print out the logs from the device on your computer and allow you to s
 
 # Syntax
 
+::: notes
+
+So now you've got your controller where you can program it, and start working on adding functionality
+I'm going to talk about some of the syntax next
+
+:::
+
 ## Triggers
+
+::: notes
+
+Triggers are anything that causes an action to happen on the controller, whether it's a switch closing, a bluetooth device coming in range, a timer, boot up, whatever.
+
+I'm only going to talk about a few of them, just to give you an idea.  There are many more available in the ESPHome docs
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+esphome:
+  on_boot:
+    then:
+      - logger.log: "Hello World"
+```
+
+::: notes
+
+On boot is just like it says, the automation runs once when the controller starts up.
+
+This can be very useful for setting default and resetting the system to some known good state.
+
+There are also on_shutdown and other lifecycle events available.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+sensor:
+  - platform: dht
+    humidity:
+    name: "Temperature"
+    id: temperature_sensor
+    on_value:
+      then:
+        - logger.log:
+          format: "Temp %.1f"
+          args: ['id(temperature_sensor).state']
+```
+
+::: notes
+
+The on_value trigger will execute whenever a sensor has a new value.
+
+See also the on_value_range trigger to execute an automation when a sensor gets within a certain range of values.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - logger.log: "Hello World"
+```
+
+::: notes
+
+The on_press trigger is very useful for buttons attached to the GPIO pins of the controller.  Can also be used for any type of mechanical switch that is on or off.
+
+See also on_release, on_click, on_multiclick
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+time:
+  - platform: sntp
+    on_time:
+      - seconds: 0
+        minutes: /5
+        then:
+          - logger.log: "Five Minute Timer"
+
+      - seconds: 0
+        hours: 7
+        days_of_week: MON-FRI
+        then:
+          - logger.log: "Weekday Alarm"
+```
+
+::: notes
+
+Timer triggers are useful for causing automations to happen at certain times.
+
+:::
 
 ## Actions
 
-## Globals
+::: notes
+
+Actions are the thing you do in response to a trigger.
+
+Sometimes they can be simple, and as we'll see later, sometime they can get very complicated.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - logger.log: "Button Pressed"
+```
+
+::: notes
+
+You've already seen the logger, this just writes out notes into the system log which can be viewed with the command we talked about earlier.
+
+You'll mostly want to use this in combination with other actions
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+output:
+  - platform: gpio
+    pin: D1
+    id: relay_1
+
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - logger.log: "Button Pressed"
+        - output.turn_on: relay_1
+```
+
+::: notes
+
+You can use the turn on / off actions to switch external devices on and off.
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - logger.log: "Button Pressed"
+        - http_request.get:
+          url: https://esphome.io
+          verify_ssl: false
+```
+
+::: notes
+
+You can use the HTTP request module to interact with external servers during actions
+
+:::
+
+---
+
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - logger.log: "Button Pressed"
+        - lambda: |-
+            id(some_binary_sensor).publish_state(false);
+
+```
+
+::: notes
+
+Lambdas are the most complicated action, but also the most powerful.
+
+You can write C code which will be executed as your action, while having full access to the state and info about the trigger event.
+
+I'd advise you to avoid making lambdas a go-to if you can avoid it, as they're inherently much harder to maintain and work on than a normal YAML action.
+
+:::
+
+## Conditions
 
 ## Scripts
 
-## If / Then
-
-## While
-
-## Lambda
+## Globals
 
 # Adding Functionality
 
