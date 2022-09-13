@@ -14,6 +14,8 @@ You can configure the controller to respond to inputs in many different ways.
 
 Can work local only
 
+My goal here is to convince you to use ESPHome for your next project instead of doing custom coding if you can avoid it.
+
 :::
 
 # What devices does it support?
@@ -488,7 +490,7 @@ Like the lambda action, the lambda condition is a do-anything option when the ot
 
 ## Scripts
 
-```
+``` { .yaml .numberLines }
 script:
   - id: blink_light
     then:
@@ -517,29 +519,469 @@ Think of them like functions if you've used other programming languages.
 
 # Adding Functionality
 
+::: notes
+
+We've talked about how to program ESP controllers, but what can we actually connect to them?
+
+:::
+
 ## Bluetooth Tracker
+
+``` { .yaml .numberLines }
+esp32_ble_tracker:
+
+sensor:
+  - platform: template
+    name: "Trash Bin In Garage"
+    id: trash_bin_in_garage
+  - platform: ble_rssi
+    mac_address: AA:BB:CC:DD:EE:FF
+    name: "Trash Bin"
+    id: trash_bin
+    on_value_range:
+      - above: 200
+        then:
+        - sensor.template.publish:
+          id: trash_bin_in_garage
+          state: 1
+```
+
+::: notes
+
+This is a project I've been working on lately.  Using BT trackers to know if my garbage cans are in the garage.
+
+:::
 
 ## Air Quality
 
+``` { .yaml .numberLines }
+uart:
+  rx_pin: D2
+  baud_rate: 9600
+
+sensor:
+  - platform: pm1006
+    pm_2_5:
+      name: "Kitchen Air Quality"
+```
+
+::: notes
+
+This is an air quality sensor based on the IKEA VINDRIKTNING
+
+:::
+
 ## Plant Sensor
+
+``` { .yaml .numberLines }
+sensor:
+  - platform: xiaomi_hhccjcy01
+    mac_address: AA:BB:CC:DD:EE:FF
+    temperature:
+      name: "Jade Plant Temperature"
+    moisture:
+      name: "Jade Plant Moisture"
+    illuminance:
+      name: "Jade Plant Light"
+    conductivity:
+      name: "Jade Plant Conductivity"
+    battery_level:
+      name: "Jade Plant Battery Level"
+```
+
+::: notes
+
+This is an integration with a common bluetooth plant sensor available on Amazon and AliExpress called MiFlora
+
+:::
 
 ## Current Clamp
 
+``` { .yaml .numberLines }
+sensor:
+  - platform: adc
+    pin: A2
+    id: adc_sensor
+
+  - platform: ct_clamp
+    sensor: adc_sensor
+    name: "Washing Machine Current"
+    update_interval: 60s
+```
+
+::: notes
+
+This is an integration with a current clamp that can be used to tell how much power a device is drawing. 
+
+The top sensor is the analog to digital current input.
+
+That input is converted into current by the bottom sensor
+
+:::
+
 ## Temperature and Humidity
+
+``` { .yaml .numberLines }
+sensor:
+  - platform: aht10
+    temperature:
+      name: "Attic Temperature"
+    humidity:
+      name: "Attic Humidity"
+    update_interval: 60s
+```
+
+::: notes
+
+There are several off the shelf temperature sensors you can use for measuring temperature and humidity.
+
+:::
 
 ## GPIO
 
-## LED Lights
+``` { .yaml .numberLines }
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D2
+      mode:
+        input: true
+        pullup: true
+    name: toggle_switch
+
+switch:
+  - platform: gpio
+    pin: 25
+    name: relay
+```
+
+::: notes
+
+The GPIO ports are the swiss army knife of the ESP device.
+Any sort of swtich can be used.
+
+:::
 
 ## Display
 
+``` { .yaml .numberLines }
+i2c:
+  sda: D1
+  scl: D2
+
+display:
+  - platform: ssd1306_i2c
+    model: SSD1306 128x64
+    address: 60
+    update_interval: 1s
+    lambda: >-
+      it.fill(COLOR_OFF);
+      it.print(0, 0, id(hack), id(yellow), id(lockout_name).c_str());
+```
+
+::: notes
+
+ESPHome supports a number of different LED and LCD displays.
+It has a basic graphics toolkit for writing text to the screen.
+
+:::
+
 # Integrating
+
+::: notes
+
+While ESPHome is very powerful on its own, it's mostly used as part of larger systems.
+Home Assistant is the most common one, although anything that speaks MQTT can be made to integrate.
+
+:::
 
 ## MQTT
 
+``` { .yaml .numberLines }
+mqtt:
+  broker: 192.168.1.201
+  username: widget
+  password: mqtt-password
+
+mqtt:
+  on_message:
+    topic: my/custom/topic
+    qos: 0
+    then:
+      - logger.log: "Hello World"
+
+binary_sensor:
+  - platform: gpio
+    on_press:
+      then:
+        - mqtt.publish:
+          topic: my/custom/topic
+          payload: "Button Pressed"
+```
+
+::: notes
+
+MQTT is a message passing protocol that's a lightway way for many different systems to communicate with each other.
+
+:::
+
 ## Home Assistant
 
+``` { .yaml .numberLines }
+api:
+```
+
+::: notes
+
+Home Assistant is the most common integration for ESPHome.
+All you need to do is add this line to your config and it'll automatically get picked up in HA.
+Sensors will be published to HA, and any switches or other outputs will be accessible as well.
+
+:::
+
 # Examples
+
+## Trash Bin Sensor
+
+```
+esphome:
+  name: kitchen-air-quality
+  platform: ESP8266
+  board: nodemcu
+  on_boot:
+    then:
+      - script.execute: turn_off
+
+api: 
+
+wifi:
+  ssid: ############
+  password: ##############
+  ap:
+    ssid: kitchen-air-quality-fallback 
+    password: ##############
+
+esp32_ble_tracker:
+
+sensor:
+  - platform: template
+    name: "Trash Bin In Garage"
+    id: trash_bin_in_garage
+  - platform: ble_rssi
+    mac_address: AA:BB:CC:DD:EE:FF
+    name: "Trash Bin"
+    id: trash_bin
+    on_value_range:
+      - above: 200
+        then:
+        - sensor.template.publish:
+          id: trash_bin_in_garage
+          state: 1
+```
+
+## Air Quality Meter
+
+```
+esphome:
+  name: kitchen-air-quality
+  platform: ESP8266
+  board: nodemcu
+  on_boot:
+    then:
+      - script.execute: turn_off
+
+api: 
+
+wifi:
+  ssid: ############
+  password: ##############
+  ap:
+    ssid: kitchen-air-quality-fallback 
+    password: ##############
+
+uart:
+  rx_pin: D2
+  baud_rate: 9600
+
+sensor:
+  - platform: aht10
+    temperature:
+      name: "Kitchen Temperature"
+    humidity:
+      name: "Kitchen Humidity"
+    update_interval: 60s
+  - platform: pm1006
+    pm_2_5:
+      name: "Kitchen Air Quality"
+```
+
+## Arch Reactor Lockouts
+
+```
+esphome:
+  name: lockout-backdoor
+  platform: ESP8266
+  board: nodemcu
+  on_boot:
+    then:
+      - script.execute: turn_off
+
+api: null
+
+wifi:
+  ssid: ARMembers
+  password: ##############
+  ap:
+    ssid: lockout-backdoor-fallback
+    password: ##############
+  use_address: 1.1.1.1
+
+globals:
+  - id: lockout_name
+    type: std::string
+    restore_value: no
+    initial_value: '"backdoor"'
+  - id: allowed_card_ids
+    type: std::vector<std::string>
+    restore_value: no
+    initial_value: '{ "aaaaa", "bbbbb", "cccccc" }'
+  - id: allowed_names
+    type: std::vector<std::string>
+    restore_value: no
+    initial_value: '{ "John", "Jane", "Joe" }'
+  - id: active_time
+    type: uint32_t
+    restore_value: no
+    initial_value: "5"
+  - id: last_scanned_id
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: last_scanned_name
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: expiration_time
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+script:
+  - id: turn_on
+    then:
+      - lambda: |-
+          id(expiration_time) = id(active_time);
+          id(relay).turn_on();
+  - id: turn_off
+    then:
+      - lambda: id(relay).turn_off();
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(expiration_time) > 0) {
+              id(expiration_time) -= 1;
+              if (id(expiration_time) == 0) {
+                  id(turn_off).execute();
+              }
+          }
+
+captive_portal: null
+
+logger: null
+
+ota: null
+
+font:
+  - id: hack
+    file: Hack-Regular.ttf
+    size: 15
+  - id: hack10
+    file: Hack-Regular.ttf
+    size: 10
+color:
+  - id: yellow
+    red: 50%
+    green: 50%
+    blue: 0%
+    white: 0%
+  - id: red
+    red: 100%
+    green: 0%
+    blue: 0%
+    white: 0%
+  - id: green
+    red: 0%
+    green: 100%
+    blue: 0%
+    white: 0%
+
+switch:
+  - platform: gpio
+    pin: D0
+    id: relay
+
+i2c:
+  sda: D2
+  scl: D1
+
+display:
+  - platform: ssd1306_i2c
+    model: SSD1306 128x64
+    address: 60
+    update_interval: 1s
+    lambda: >-
+      it.fill(COLOR_OFF);
+
+
+      it.print(0, 0, id(hack), id(yellow), id(lockout_name).c_str());
+
+
+      if (id(expiration_time) > 0) {
+          it.print(0, 15, id(hack10), id(green), "Unlocked");
+          it.print(0, 25, id(hack10), id(green), to_string(id(expiration_time)).c_str());
+          it.print(25, 25, id(hack10), id(green), "Seconds Left");
+      } else {
+          it.print(0, 15, id(hack), id(red), "Locked");
+      }
+
+
+      it.print(0, 45, id(hack10), id(last_scanned_id).c_str());
+
+      it.print(40, 45, id(hack10), id(last_scanned_name).c_str());
+
+wiegand_reader:
+  d0_pin: 12
+  d1_pin: 14
+  on_tag:
+    lambda: |-
+      ESP_LOGD("reader", "Read tag %s", x.c_str());
+
+      id(last_scanned_id) = x;
+      id(last_scanned_name) = "Not Allowed";
+
+      bool found = false;
+      for (int i = 0; i < id(allowed_card_ids).size(); i++) {
+          if (id(allowed_card_ids)[i].compare(x) == 0) {
+              id(last_scanned_name) = id(allowed_names)[i];
+              id(turn_on).execute();
+              found = true;
+              ESP_LOGD(
+                  "reader",
+                  "allowed tag found matching %s: %s",
+                  x.c_str(),
+                  id(last_scanned_name).c_str()
+              );
+              break;
+          }
+      }
+
+      if (!found) {
+          ESP_LOGD("reader", "no allowed tags found matching %s", x.c_str());
+      }
+
+```
 
 # Questions
 
