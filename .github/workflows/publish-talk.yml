@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  compile-talk-with-pandoc:
+  build:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
