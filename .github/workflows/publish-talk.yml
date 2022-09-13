@@ -13,7 +13,9 @@ jobs:
       - name: Create Dist Directory
         run: mkdir -p dist
       - name: Clone Reveal
-        run: git clone https://github.com/hakimel/reveal.js.git 'dist/reveal.js'
+        run: git clone https://github.com/hakimel/reveal.js.git 'reveal.js'
+      - name: Copy Reveal To Dist
+        run: cp -r reveal.js/dist dist/reveal.js
       - uses: docker://pandoc/core:2.9
         with:
           args: --slide-level 2 -t revealjs -s README.md -o dist/index.html
