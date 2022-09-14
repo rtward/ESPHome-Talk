@@ -1,0 +1,31 @@
+esphome:
+  name: trash-bin-sensor
+
+esp32:
+  board: nodemcu-32s
+
+api:
+
+wifi:
+  ssid: '#########'
+  password: '#########'
+
+esp32_ble_tracker:
+
+sensor:
+  - platform: template
+    name: "Trash Bin In Garage"
+    id: trash_bin_in_garage
+
+  - platform: ble_rssi
+    mac_address: AA:BB:CC:DD:EE:FF
+    name: "Trash Bin"
+    id: trash_bin
+    on_value_range:
+      - above: 200
+        then:
+          - sensor.template.publish:
+              id: trash_bin_in_garage
+              state: 1
+
+

@@ -528,6 +528,7 @@ sensor:
   - platform: template
     name: "Trash Bin In Garage"
     id: trash_bin_in_garage
+
   - platform: ble_rssi
     mac_address: AA:BB:CC:DD:EE:FF
     name: "Trash Bin"
@@ -536,8 +537,8 @@ sensor:
       - above: 200
         then:
         - sensor.template.publish:
-          id: trash_bin_in_garage
-          state: 1
+            id: trash_bin_in_garage
+            state: 1
 ```
 
 ::: notes
@@ -737,21 +738,16 @@ api:
 
 ```
 esphome:
-  name: kitchen-air-quality
-  platform: ESP8266
-  board: nodemcu
-  on_boot:
-    then:
-      - script.execute: turn_off
+  name: trash-bin-sensor
 
-api: 
+esp32:
+  board: nodemcu-32s
+
+api:
 
 wifi:
-  ssid: ############
-  password: ##############
-  ap:
-    ssid: kitchen-air-quality-fallback 
-    password: ##############
+  ssid: #########
+  password: #########
 
 esp32_ble_tracker:
 
@@ -759,6 +755,7 @@ sensor:
   - platform: template
     name: "Trash Bin In Garage"
     id: trash_bin_in_garage
+
   - platform: ble_rssi
     mac_address: AA:BB:CC:DD:EE:FF
     name: "Trash Bin"
@@ -766,9 +763,10 @@ sensor:
     on_value_range:
       - above: 200
         then:
-        - sensor.template.publish:
-          id: trash_bin_in_garage
-          state: 1
+          - sensor.template.publish:
+              id: trash_bin_in_garage
+              state: 1
+
 ```
 
 ## Air Quality Meter
