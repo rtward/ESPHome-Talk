@@ -806,7 +806,7 @@ sensor:
 
 ## Arch Reactor Lockouts
 
-``` { .yaml }
+``` { .yaml .numberLines .stretch }
 esphome:
   name: lockout-backdoor
   platform: ESP8266
