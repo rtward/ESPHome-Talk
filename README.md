@@ -1,6 +1,6 @@
 % Intro to ESPHome
 % https://github.com/rtward/ESPHome-Talk
-% ![Link to Talk](images/qr-link.png) 
+% https://rtward.github.io/ESPHome-Talk
 
 # What is ESPHome?
 
@@ -975,8 +975,8 @@ wiegand_reader:
 
 # Questions
 
-![Link to Talk](images/qr-link.png)
-
 https://github.com/rtward/ESPHome-Talk
+
+https://rtward.github.io/ESPHome-Talk
 
 https://esphome.io/index.html
