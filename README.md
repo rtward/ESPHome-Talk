@@ -55,10 +55,13 @@ pacman -S esphome
 brew install esphome
 ```
 
+https://esphome.io/guides/installing_esphome.html
+
 ::: notes
 
  - The native option is probably the least used, but it is available and some people prefer it.
  - You'll install the esphome command line client from your operating system's repos
+ - Windows is a bit more involved
 
 :::
 
