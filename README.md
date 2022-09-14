@@ -732,7 +732,7 @@ api:
 
 ## Trash Bin Sensor
 
-``` { .yaml .numberLines }
+```
 esphome:
   name: kitchen-air-quality
   platform: ESP8266
@@ -770,7 +770,7 @@ sensor:
 
 ## Air Quality Meter
 
-``` { .yaml .numberLines }
+```
 esphome:
   name: kitchen-air-quality
   platform: ESP8266
@@ -806,9 +806,7 @@ sensor:
 
 ## Arch Reactor Lockouts
 
----
-
-``` { .yaml .numberLines  }
+```
 esphome:
   name: lockout-backdoor
   platform: ESP8266
