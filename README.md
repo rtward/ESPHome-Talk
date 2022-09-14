@@ -239,8 +239,8 @@ sensor:
     on_value:
       then:
         - logger.log:
-          format: "Temp %.1f"
-          args: ['id(temperature_sensor).state']
+            format: "Temp %.1f"
+            args: ['id(temperature_sensor).state']
 ```
 
 ::: notes
@@ -348,8 +348,8 @@ binary_sensor:
       then:
         - logger.log: "Button Pressed"
         - http_request.get:
-          url: https://esphome.io
-          verify_ssl: false
+            url: https://esphome.io
+            verify_ssl: false
 ```
 
 ::: notes
